@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ESCAPE FROM NEW YORK</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-wrapper">
+        <canvas id="gameCanvas" width="600" height="500"></canvas>
+        <div id="mobile-controls">
+            <div id="dpad">
+                <div class="dpad-row">
+                    <button class="dpad-btn" id="btn-up" aria-label="Up">▲</button>
+                </div>
+                <div class="dpad-row">
+                    <button class="dpad-btn" id="btn-left" aria-label="Left">◄</button>
+                    <div class="dpad-center"></div>
+                    <button class="dpad-btn" id="btn-right" aria-label="Right">►</button>
+                </div>
+                <div class="dpad-row">
+                    <button class="dpad-btn" id="btn-down" aria-label="Down">▼</button>
+                </div>
+            </div>
+            <div id="action-area">
+                <button class="action-btn" id="btn-start" aria-label="Start">START</button>
+                <button class="action-btn btn-b" id="btn-b" aria-label="B button">B</button>
+                <button class="action-btn btn-a" id="btn-a" aria-label="A button">A</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
