@@ -13,8 +13,9 @@ function px(ctx, x, y, w, h, color) {
 
 function textLine(ctx, text, x, y, color, size, align) {
     ctx.save();
+    size = Math.max(size || 14, 16);
     ctx.fillStyle    = color || '#00ff00';
-    ctx.font         = (size || 14) + 'px "Courier New", monospace';
+    ctx.font         = size + 'px "Courier New", monospace';
     ctx.textAlign    = align || 'left';
     ctx.textBaseline = 'top';
     ctx.fillText(text, x, y);
@@ -23,7 +24,8 @@ function textLine(ctx, text, x, y, color, size, align) {
 
 function glowText(ctx, text, x, y, color, size, align, glowColor) {
     ctx.save();
-    ctx.font         = (size || 14) + 'px "Courier New", monospace';
+    size = Math.max(size || 14, 16);
+    ctx.font         = size + 'px "Courier New", monospace';
     ctx.textAlign    = align || 'center';
     ctx.textBaseline = 'middle';
     ctx.shadowColor  = glowColor || color || '#00ff00';
@@ -35,10 +37,11 @@ function glowText(ctx, text, x, y, color, size, align, glowColor) {
 
 /* wrap text to fit within maxWidth, returns array of lines */
 function wrapText(ctx, text, maxWidth, size) {
+    size = Math.max(size || 14, 16);
     const words = text.split(' ');
     const lines = [];
     let line    = '';
-    ctx.font = (size || 14) + 'px "Courier New", monospace';
+    ctx.font = size + 'px "Courier New", monospace';
     for (const word of words) {
         const test = line ? line + ' ' + word : word;
         if (ctx.measureText(test).width > maxWidth && line) {
