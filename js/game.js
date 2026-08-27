@@ -84,6 +84,9 @@ class EscapeGame {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx    = this.canvas.getContext('2d');
+        this.readerHeading = document.getElementById('reader-heading');
+        this.readerBody    = document.getElementById('reader-body');
+        this.lastReaderKey = '';
 
         /* --- game state --- */
         this.state  = STATE.TITLE;
@@ -279,6 +282,57 @@ class EscapeGame {
         /* screen flash overlay */
         if (this.flashTimer > 0) {
             drawFlash(ctx, CW, CH, this.flashColor, this.flashTimer * 0.8);
+        }
+
+        this._updateReader();
+    }
+
+    _escapeReaderText(value) {
+        return String(value).replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[char]);
+    }
+
+    _updateReader() {
+        if (!this.readerHeading || !this.readerBody) return;
+
+        const levelData = this._currentLevel();
+        const stats = `<span class="reader-stats">LEVEL ${this.level} · LIVES ${this.lives} · SCORE ${String(this.score).padStart(7, '0')}</span>`;
+        let heading = 'ESCAPE FROM NEW YORK';
+        let body = 'Tap A to start. Turn the phone sideways for the largest game picture.';
+
+        if (this.state === STATE.SCENE_INTRO) {
+            heading = `LEVEL ${this.level}: ${levelData.name}`;
+            body = `${stats}${this._escapeReaderText(levelData.scene)}<br>${this._escapeReaderText(levelData.synopsis).replace(/\n/g, '<br>')}<br><strong>Tap A to continue.</strong>`;
+        } else if (this.state === STATE.QUIZ || this.state === STATE.QUIZ_RESULT) {
+            const question = levelData.questions[this.qIndex];
+            heading = `QUESTION ${this.qIndex + 1} OF 10`;
+            const answers = question.opts.map((answer, index) =>
+                `<span class="reader-answer">${String.fromCharCode(65 + index)}. ${this._escapeReaderText(answer)}</span>`
+            ).join('');
+            const result = this.qShowResult
+                ? `<br><strong>${this.qSelected === question.correct ? 'CORRECT!' : `WRONG. Correct answer: ${String.fromCharCode(65 + question.correct)}.`}</strong>`
+                : '';
+            body = `${stats}${this._escapeReaderText(question.q)}${answers}${result}`;
+        } else if (this.state === STATE.SNAKE) {
+            heading = `ACTION: ${levelData.name}`;
+            body = `${stats}Use the direction pad. Collect items and avoid enemies. Items: ${this.foodCollected}/${this.foodTarget}.`;
+        } else if (this.state === STATE.LEVEL_COMPLETE) {
+            heading = `LEVEL ${this.level} COMPLETE`;
+            body = `${stats}Quiz: ${this.qCorrect}/10 correct. Tap A to continue.`;
+        } else if (this.state === STATE.GAME_OVER) {
+            heading = 'GAME OVER';
+            body = `${stats}Tap A to try again.`;
+        } else if (this.state === STATE.VICTORY) {
+            heading = 'NEW YORK ESCAPED';
+            body = `${stats}Mission complete. Tap A to play again.`;
+        }
+
+        const key = heading + '|' + body;
+        if (key !== this.lastReaderKey) {
+            this.readerHeading.textContent = heading;
+            this.readerBody.innerHTML = body;
+            this.lastReaderKey = key;
         }
     }
 
