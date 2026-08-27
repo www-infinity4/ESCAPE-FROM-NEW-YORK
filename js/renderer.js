@@ -636,13 +636,13 @@ function drawQuiz(ctx, W, H, levelData, qData, state) {
     px(ctx, 0, 50, W, 2, pal.accent);
 
     /* level name left */
-    textLine(ctx, 'LEVEL ' + levelData.id + ': ' + levelData.name, 10, 8, pal.hi, 12);
+    textLine(ctx, 'LEVEL ' + levelData.id + ': ' + levelData.name, 10, 7, pal.hi, 16);
     /* question count right */
-    textLine(ctx, 'Q ' + (qIndex + 1) + '/10', W - 70, 8, '#888', 12);
+    textLine(ctx, 'Q ' + (qIndex + 1) + '/10', W - 78, 7, '#ffffff', 16);
     /* correct count */
-    textLine(ctx, '✓ ' + qCorrect, W - 70, 28, '#00cc00', 12);
+    textLine(ctx, '✓ ' + qCorrect, W - 78, 27, '#00ff00', 16);
     /* lives left (drawn as hearts) */
-    textLine(ctx, '♥'.repeat(state.lives), 10, 28, '#cc0000', 14);
+    textLine(ctx, '♥'.repeat(state.lives), 10, 27, '#ff4444', 18);
 
     /* timer bar */
     const timerFrac = Math.max(0, qTimer / 15);
