@@ -76,6 +76,40 @@ body {
     font-weight: bold;
 }
 
+#game-reader {
+    width: 100%;
+    max-width: 600px;
+    padding: 14px 16px;
+    background: #050f05;
+    border: 3px solid #00cc00;
+    border-top: 0;
+    color: #ffffff;
+    font-size: 20px;
+    line-height: 1.45;
+    font-weight: bold;
+    text-shadow: 0 0 4px #006600;
+}
+
+#reader-heading {
+    margin-bottom: 8px;
+    color: #7dff7d;
+    font-size: 22px;
+}
+
+#reader-body .reader-stats {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffff66;
+}
+
+#reader-body .reader-answer {
+    display: block;
+    margin-top: 6px;
+    padding: 7px 9px;
+    border-left: 4px solid #00aa00;
+    background: #0b1c0b;
+}
+
 /* =====================================================
    MOBILE GAMEPAD CONTROLS
    ===================================================== */
@@ -206,4 +240,6 @@ body {
     .action-btn { width: 52px; height: 52px; font-size: 13px; }
     .btn-a      { width: 60px; height: 60px; }
     #btn-start  { width: 58px; height: 34px; font-size: 11px; }
+    #game-reader { font-size: 20px; padding: 13px 14px; }
+    #reader-heading { font-size: 23px; }
 }
