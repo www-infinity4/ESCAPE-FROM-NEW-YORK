@@ -24,6 +24,16 @@
             <img id="story-image" src="assets/social-preview.png" alt="Snake's Revenge title artwork">
             <div id="scene-badge">ILLUSTRATED PROTOTYPE · LEVEL 1</div>
         </section>
+        <section id="soundtrack-panel" aria-label="Headset soundtrack">
+            <div class="headset-icon" aria-hidden="true">🎧</div>
+            <div class="track-copy">
+                <span id="track-label">SNAKE'S HEADSET</span>
+                <strong id="track-title">Soundtrack begins with the mission</strong>
+                <span id="track-artist">Tap Start Level 1 to enable audio</span>
+            </div>
+            <button id="music-toggle" type="button" aria-label="Turn soundtrack on or off" aria-pressed="false">OFF</button>
+        </section>
+        <p id="audio-status" role="status" aria-live="polite">Licensed audio sources can be connected without changing the game.</p>
         <section id="start-panel" class="game-panel">
             <p class="eyebrow">INFINITY GAMES PRESENTS</p><h1>Snake's Revenge</h1><h2>Escape from New York</h2>
             <p>Study each scene and decide how the team should escape. Take all the time you need—nothing advances until you press a button.</p>
@@ -46,7 +56,7 @@
         <h2>Unified Infinity Wallet</h2><p>Your wallet stays below the complete game.</p><div data-infinity-wallet-slot></div>
     </section>
     <script src="js/data.js?v=20260827-revenge4"></script><script src="js/scenarios.js?v=20260827-revenge4"></script>
-    <script src="js/storybook.js?v=20260828-story1"></script>
+    <script src="js/soundtrack.js?v=20260828-sound1"></script><script src="js/storybook.js?v=20260828-sound1"></script>
     <script src="https://www-infinity4.github.io/Mint-For-Infinity/infinity-wallet-menu.js?v=20260814-menu2"></script>
 </body>
 </html>
