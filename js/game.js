@@ -29,7 +29,7 @@ const STATE = {
 
 const QUIZ_TIME   = 15;   /* seconds per question          */
 const SNAKE_TIME  = 90;   /* seconds for snake phase       */
-const FOOD_TARGET = 8;    /* food items to collect per lvl */
+const FOOD_TARGET = 3;    /* access keys needed before exit */
 const TOTAL_LVLS  = 10;
 
 /* ── ENEMY SNAKE ──────────────────────────────────── */
@@ -199,7 +199,13 @@ class EscapeGame {
 
     _updateSnake(dt) {
         this.snakeTimer -= dt;
-        if (this.snakeTimer <= 0 || this.foodCollected >= this.foodTarget) {
+        if (this.snakeTimer <= 0) {
+            this._endSnakePhase(false);
+            return;
+        }
+        const escapeHead = this.snakeBody[0];
+        if (escapeHead && this.foodCollected >= this.foodTarget &&
+            escapeHead.x === this.exitCell.x && escapeHead.y === this.exitCell.y) {
             this._endSnakePhase(true);
             return;
         }
@@ -316,7 +322,7 @@ class EscapeGame {
             body = `${stats}${this._escapeReaderText(question.q)}${answers}${result}`;
         } else if (this.state === STATE.SNAKE) {
             heading = `ACTION: ${levelData.name}`;
-            body = `${stats}Use the direction pad. Collect items and avoid enemies. Items: ${this.foodCollected}/${this.foodTarget}.`;
+            body = `${stats}Guide the green snake. Collect ${this.foodTarget} access keys, avoid red enemies, then reach the glowing EXIT. Keys: ${this.foodCollected}/${this.foodTarget}.`;
         } else if (this.state === STATE.LEVEL_COMPLETE) {
             heading = `LEVEL ${this.level} COMPLETE`;
             body = `${stats}Quiz: ${this.qCorrect}/10 correct. Tap A to continue.`;
@@ -347,6 +353,9 @@ class EscapeGame {
         for (const f of this.foods) {
             drawFood(ctx, f, CELL, OX, OY, this.tick);
         }
+
+        drawExtractionExit(ctx, this.exitCell, CELL, OX, OY, this.tick,
+            this.foodCollected >= this.foodTarget);
 
         /* enemies */
         for (const e of this.enemies) {
@@ -399,6 +408,7 @@ class EscapeGame {
         this.snakeTimer   = SNAKE_TIME;
         this.foodCollected = 0;
         this.foodTarget   = FOOD_TARGET;
+        this.exitCell     = { x: GRID_W - 2, y: 1 };
         this.snakeBonus   = 0;
 
         /* spawn enemies based on level config */
@@ -435,7 +445,8 @@ class EscapeGame {
             tries++;
         } while (tries < 50 && (
             this._snakeAt(fx, fy) ||
-            this.foods.some(f => f.x === fx && f.y === fy)
+            this.foods.some(f => f.x === fx && f.y === fy) ||
+            (this.exitCell && fx === this.exitCell.x && fy === this.exitCell.y)
         ));
         this.foods.push({ x: fx, y: fy, bonus: !!bonus });
     }

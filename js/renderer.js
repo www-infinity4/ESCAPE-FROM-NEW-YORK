@@ -107,11 +107,11 @@ function drawTitle(ctx, W, H, tick) {
     }
 
     /* title text */
-    glowText(ctx, 'ESCAPE FROM', W/2, 100, '#ff4400', 28, 'center', '#ff2200');
-    glowText(ctx, 'NEW YORK', W/2, 140, '#ff4400', 36, 'center', '#ff2200');
+    glowText(ctx, "SNAKE'S REVENGE", W/2, 112, '#d8d8d8', 34, 'center', '#00aa44');
+    glowText(ctx, 'ESCAPE FROM NEW YORK', W/2, 158, '#55ff88', 22, 'center', '#006622');
 
     /* subtitle */
-    glowText(ctx, '— T H E   G A M E —', W/2, 195, '#888800', 16, 'center', '#555500');
+    glowText(ctx, '— TACTICAL MAZE ESCAPE —', W/2, 205, '#cccc44', 16, 'center', '#555500');
 
     /* press start blink */
     if (Math.floor(tick * 1.5) % 2 === 0) {
@@ -139,15 +139,18 @@ function drawTitle(ctx, W, H, tick) {
 function drawSceneIntro(ctx, W, H, levelData, tick, charCount) {
     const pal = levelData.palette;
 
-    /* sky gradient */
-    const grad = ctx.createLinearGradient(0, 0, 0, H * 0.65);
-    grad.addColorStop(0, pal.dark);
-    grad.addColorStop(1, pal.sky);
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H * 0.65);
-
-    /* draw pixel-art scene based on level id */
-    drawLevelScene(ctx, W, H, levelData, tick);
+    const sceneCard = typeof SCENE_CARD_IMAGES !== 'undefined' && SCENE_CARD_IMAGES[levelData.id];
+    if (sceneCard && sceneCard.complete && sceneCard.naturalWidth) {
+        ctx.drawImage(sceneCard, 0, 0, W, H * 0.62);
+    } else {
+        /* fallback pixel-art scene while original cards are still being built */
+        const grad = ctx.createLinearGradient(0, 0, 0, H * 0.65);
+        grad.addColorStop(0, pal.dark);
+        grad.addColorStop(1, pal.sky);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H * 0.65);
+        drawLevelScene(ctx, W, H, levelData, tick);
+    }
 
     /* semi-transparent text panel */
     px(ctx, 0, H * 0.55, W, H * 0.45, 'rgba(0,0,0,0.82)');
@@ -720,7 +723,7 @@ function drawSnakeHUD(ctx, W, HUD_H, state) {
     textLine(ctx, 'LEVEL ' + state.level, 8, 6, '#ffff00', 13);
     textLine(ctx, 'SCORE: ' + String(state.score).padStart(7,'0'), 8, 24, '#00ff00', 13);
     textLine(ctx, '♥'.repeat(state.lives), W/2 - 30, 6, '#cc0000', 16);
-    textLine(ctx, 'FOOD: ' + state.foodCollected + '/' + state.foodTarget, W - 120, 6, '#00cccc', 13);
+    textLine(ctx, 'KEYS: ' + state.foodCollected + '/' + state.foodTarget, W - 128, 6, '#00ffff', 13);
 
     /* countdown timer */
     const secs = Math.ceil(state.snakeTimer);
@@ -785,6 +788,27 @@ function drawFood(ctx, food, CELL, offsetX, offsetY, tick) {
     ctx.lineTo(-CELL/2 + 3, 0);
     ctx.closePath();
     ctx.fill();
+    ctx.restore();
+}
+
+function drawExtractionExit(ctx, exit, CELL, offsetX, offsetY, tick, unlocked) {
+    if (!exit) return;
+    const x = offsetX + exit.x * CELL;
+    const y = offsetY + exit.y * CELL;
+    const color = unlocked ? '#39ff88' : '#777700';
+    ctx.save();
+    ctx.shadowColor = color;
+    ctx.shadowBlur = unlocked ? 16 + Math.sin(tick * 5) * 5 : 2;
+    ctx.fillStyle = '#001600';
+    ctx.fillRect(x, y, CELL, CELL);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x + 1, y + 1, CELL - 2, CELL - 2);
+    ctx.fillStyle = color;
+    ctx.font = 'bold 9px "Courier New"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(unlocked ? 'EXIT' : 'LOCK', x + CELL / 2, y + CELL / 2);
     ctx.restore();
 }
 

@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "snakes-revenge-content",
+  "main": "cloudflare/worker.js",
+  "compatibility_date": "2026-08-27",
+  "ai": { "binding": "AI" },
+  "observability": { "enabled": true }
+}
