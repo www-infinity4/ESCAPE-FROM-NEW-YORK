@@ -2,62 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Snake's Revenge: Escape from New York</title>
-    <meta name="description" content="Guide the snake operative through ten tactical escape missions and one hundred scenario decisions.">
+    <meta name="description" content="An illustrated tactical escape adventure with ten levels and one hundred decisions.">
     <meta property="og:title" content="Snake's Revenge: Escape from New York">
-    <meta property="og:description" content="Ten escape levels. One hundred decisions. Find the exit before time runs out.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/">
+    <meta property="og:description" content="Study each illustrated scene, choose the safest escape decision, and guide the team through New York.">
+    <meta property="og:type" content="website"><meta property="og:url" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/">
     <meta property="og:site_name" content="Infinity Games">
-    <meta property="og:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=1">
-    <meta property="og:image:width" content="1729">
-    <meta property="og:image:height" content="910">
-    <meta property="og:image:alt" content="Snake's Revenge: Escape from New York game artwork showing a maze, snake drone, guards, and glowing exit">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Snake's Revenge: Escape from New York">
-    <meta name="twitter:description" content="A phone-first tactical maze escape game.">
-    <meta name="twitter:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=1">
-    <meta name="twitter:image:alt" content="Snake's Revenge game artwork with a glowing maze escape route">
+    <meta property="og:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=2">
+    <meta property="og:image:width" content="1729"><meta property="og:image:height" content="910">
+    <meta property="og:image:alt" content="Snake's Revenge illustrated maze adventure with an operative, snake guide, guards, and glowing exit">
+    <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Snake's Revenge: Escape from New York">
+    <meta name="twitter:description" content="A phone-first illustrated escape adventure. Read at your own pace—there is no timer.">
+    <meta name="twitter:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=2">
     <link rel="canonical" href="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/">
-    <link rel="stylesheet" href="css/style.css?v=20260827-revenge4">
+    <link rel="stylesheet" href="css/storybook.css?v=20260828-story1">
 </head>
 <body>
-    <div id="game-wrapper">
-        <div id="sticky-game-screen">
-            <canvas id="gameCanvas" width="600" height="500"></canvas>
-            <div id="screen-label">GAME SCREEN STAYS HERE WHILE YOU CHOOSE</div>
-        </div>
-        <section id="game-reader" role="status" aria-live="polite" aria-atomic="true">
-            <div id="reader-heading">ESCAPE FROM NEW YORK</div>
-            <div id="reader-body">Tap A to start. The mission text and questions will appear here in large type.</div>
+    <main id="storybook-game">
+        <section id="story-screen" aria-label="Current game scene">
+            <img id="story-image" src="assets/social-preview.png" alt="Snake's Revenge title artwork">
+            <div id="scene-badge">ILLUSTRATED PROTOTYPE · LEVEL 1</div>
         </section>
-        <div id="phone-help">Read the mission, then tap A to continue. Use the green direction pad to move. Tap A to answer or confirm; START pauses.</div>
-        <div id="mobile-controls">
-            <div id="dpad">
-                <div class="dpad-row">
-                    <button class="dpad-btn" id="btn-up" aria-label="Up">▲</button>
-                </div>
-                <div class="dpad-row">
-                    <button class="dpad-btn" id="btn-left" aria-label="Left">◄</button>
-                    <div class="dpad-center"></div>
-                    <button class="dpad-btn" id="btn-right" aria-label="Right">►</button>
-                </div>
-                <div class="dpad-row">
-                    <button class="dpad-btn" id="btn-down" aria-label="Down">▼</button>
-                </div>
-            </div>
-            <div id="action-area">
-                <button class="action-btn" id="btn-start" aria-label="Start">START</button>
-                <button class="action-btn btn-b" id="btn-b" aria-label="B button">B</button>
-                <button class="action-btn btn-a" id="btn-a" aria-label="A button">A</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/data.js?v=20260827-revenge4"></script>
-    <script src="js/scenarios.js?v=20260827-revenge4"></script>
-    <script src="js/renderer.js?v=20260827-revenge4"></script>
-    <script src="js/game.js?v=20260827-revenge4"></script>
-<script src="https://www-infinity4.github.io/Mint-For-Infinity/infinity-wallet-menu.js?v=20260814-menu2"></script></body>
+        <section id="start-panel" class="game-panel">
+            <p class="eyebrow">INFINITY GAMES PRESENTS</p><h1>Snake's Revenge</h1><h2>Escape from New York</h2>
+            <p>Study each scene and decide how the team should escape. Take all the time you need—nothing advances until you press a button.</p>
+            <button id="start-game" class="primary-button" type="button">START LEVEL 1</button>
+        </section>
+        <section id="question-panel" class="game-panel" hidden aria-live="polite">
+            <div class="progress-row"><span>LEVEL 1 · THE PRISON MAZE</span><span id="question-count">SCENE 1 OF 10</span></div>
+            <div class="progress-track" aria-hidden="true"><div id="progress-fill"></div></div>
+            <h2 id="question-text"></h2><div id="answer-list" aria-label="Answer choices"></div>
+            <div id="answer-feedback" hidden></div><button id="next-scene" class="primary-button" type="button" hidden>NEXT SCENE</button>
+        </section>
+        <section id="complete-panel" class="game-panel" hidden>
+            <p class="eyebrow">LEVEL 1 PROTOTYPE COMPLETE</p><h2>You reached extraction.</h2><p id="final-score"></p>
+            <p>The first ten illustrated decisions are complete. The remaining ninety scenes can follow this same format.</p>
+            <button id="play-again" class="primary-button" type="button">PLAY LEVEL AGAIN</button>
+        </section>
+        <p class="classic-note">The original 8-bit prototype is archived in the repository and is no longer loaded by this page.</p>
+    </main>
+    <section id="wallet-area" aria-label="Unified Infinity Wallet">
+        <h2>Unified Infinity Wallet</h2><p>Your wallet stays below the complete game.</p><div data-infinity-wallet-slot></div>
+    </section>
+    <script src="js/data.js?v=20260827-revenge4"></script><script src="js/scenarios.js?v=20260827-revenge4"></script>
+    <script src="js/storybook.js?v=20260828-story1"></script>
+    <script src="https://www-infinity4.github.io/Mint-For-Infinity/infinity-wallet-menu.js?v=20260814-menu2"></script>
+</body>
 </html>
