@@ -64,6 +64,27 @@ body {
     background: #000;
 }
 
+#sticky-game-screen {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    width: 100%;
+    max-width: 600px;
+    background: #000;
+}
+
+#screen-label {
+    display: none;
+    padding: 5px 8px;
+    background: #001600;
+    border: 2px solid #00cc00;
+    border-top: 0;
+    color: #7dff7d;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+
 #phone-help {
     width: 100%;
     padding: 10px 14px;
@@ -227,7 +248,13 @@ body {
 @media (max-width: 480px) {
     body { padding: 0; }
 
-    #gameCanvas { border-width: 2px; }
+    #gameCanvas {
+        border-width: 2px;
+        max-height: 42svh;
+        object-fit: contain;
+    }
+
+    #screen-label { display: block; }
 
     .dpad-btn,
     .dpad-center {
