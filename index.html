@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Snake's Revenge: Escape from New York</title>
-    <meta name="description" content="An illustrated tactical escape adventure with ten levels and one hundred decisions.">
+    <title>Snake's Revenge | Infinity Games</title>
+    <meta name="description" content="Play Snake’s Revenge: ten illustrated escape scenes with a different YouTube song for each scene. Take your time—there is no timer.">
     <meta property="og:title" content="Snake's Revenge: Escape from New York">
-    <meta property="og:description" content="Study each illustrated scene, choose the safest escape decision, and guide the team through New York.">
+    <meta property="og:description" content="Play ten illustrated escape scenes with a classic-rock YouTube soundtrack. Guide Snake through New York at your own pace.">
     <meta property="og:type" content="website"><meta property="og:url" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:secure_url" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=20260831">
     <meta property="og:site_name" content="Infinity Games">
-    <meta property="og:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=2">
+    <meta property="og:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=20260831">
     <meta property="og:image:width" content="1729"><meta property="og:image:height" content="910">
     <meta property="og:image:alt" content="Snake's Revenge illustrated maze adventure with an operative, snake guide, guards, and glowing exit">
     <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Snake's Revenge: Escape from New York">
     <meta name="twitter:description" content="A phone-first illustrated escape adventure. Read at your own pace—there is no timer.">
-    <meta name="twitter:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=2">
+    <meta name="twitter:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=20260831">
     <link rel="canonical" href="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/">
-    <link rel="stylesheet" href="css/storybook.css?v=20260828-story1">
+    <link rel="stylesheet" href="css/storybook.css?v=20260831-youtube1">
 </head>
 <body>
     <main id="storybook-game">
+        <div class="share-bar"><span>INFINITY GAMES</span><button id="share-game" type="button">Share game</button><span id="share-status" role="status"></span></div>
         <section id="story-screen" aria-label="Current game scene">
             <img id="story-image" src="assets/social-preview.png" alt="Snake's Revenge title artwork">
             <div id="scene-badge">ILLUSTRATED PROTOTYPE · LEVEL 1</div>
@@ -33,7 +37,11 @@
             </div>
             <button id="music-toggle" type="button" aria-label="Turn soundtrack on or off" aria-pressed="false">OFF</button>
         </section>
-        <p id="audio-status" role="status" aria-live="polite">Licensed audio sources can be connected without changing the game.</p>
+        <p id="audio-status" role="status" aria-live="polite">Start the mission to play music. Your phone may also need a tap on the YouTube player.</p>
+        <section class="youtube-panel" aria-label="YouTube music player">
+            <div class="youtube-frame"><div id="youtube-player"></div></div>
+            <div class="music-links"><a id="youtube-link" href="https://www.youtube.com/watch?v=dV3AziKTBUo" target="_blank" rel="noopener">Open on YouTube</a><a id="youtube-search" href="https://www.youtube.com/results?search_query=Steve+Miller+Band+The+Joker+official" target="_blank" rel="noopener">Find song</a></div>
+        </section>
         <section id="start-panel" class="game-panel">
             <p class="eyebrow">INFINITY GAMES PRESENTS</p><h1>Snake's Revenge</h1><h2>Escape from New York</h2>
             <p>Study each scene and decide how the team should escape. Take all the time you need—nothing advances until you press a button.</p>
@@ -56,7 +64,7 @@
         <h2>Unified Infinity Wallet</h2><p>Your wallet stays below the complete game.</p><div data-infinity-wallet-slot></div>
     </section>
     <script src="js/data.js?v=20260827-revenge4"></script><script src="js/scenarios.js?v=20260827-revenge4"></script>
-    <script src="js/soundtrack.js?v=20260828-sound1"></script><script src="js/storybook.js?v=20260828-sound1"></script>
+    <script src="js/soundtrack.js?v=20260831-youtube1"></script><script src="js/storybook.js?v=20260831-youtube1"></script>
     <script src="https://www-infinity4.github.io/Mint-For-Infinity/infinity-wallet-menu.js?v=20260814-menu2"></script>
 </body>
 </html>

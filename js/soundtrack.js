@@ -1,106 +1,144 @@
 'use strict';
 
 (() => {
+  // Artist / label uploads. Keep the full YouTube player and its controls visible.
   const tracks = [
-    { title: 'The Joker', artist: 'Steve Miller Band' },
-    { title: 'Have You Ever Seen the Rain', artist: 'Creedence Clearwater Revival' },
-    { title: 'Joy to the World', artist: 'Three Dog Night' },
-    { title: 'Breathe (In the Air)', artist: 'Pink Floyd' },
-    { title: 'Smoke on the Water', artist: 'Deep Purple' },
-    { title: 'Dear Mr. Fantasy', artist: 'Traffic' },
-    { title: 'The Power of Love', artist: 'Huey Lewis and the News' },
-    { title: 'Back in the High Life Again', artist: 'Steve Winwood' },
-    { title: 'Another Day in Paradise', artist: 'Phil Collins' },
-    { title: 'Sweet Emotion', artist: 'Aerosmith' }
+    { title: 'The Joker', artist: 'Steve Miller Band', videoId: 'dV3AziKTBUo', alternate: 'q3mfENm6VJc' },
+    { title: 'Have You Ever Seen the Rain', artist: 'Creedence Clearwater Revival', videoId: 'u1V8YRJnr4Q', alternate: 'JKES3yfnD9U' },
+    { title: 'Joy to the World', artist: 'Three Dog Night', videoId: 'EVcpKjXYa5c', alternate: '7dMIMJqDq0s' },
+    { title: 'Breathe (In the Air)', artist: 'Pink Floyd', videoId: 'jcz0YxYl6Ac', alternate: '_396y7Vk9NA' },
+    { title: 'Smoke on the Water', artist: 'Deep Purple', videoId: 'Q2FzZSBD5LE', alternate: '3pVQj2v7tBI' },
+    { title: 'Dear Mr. Fantasy', artist: 'Traffic', videoId: 'sS_eHdqcrM8' },
+    { title: 'The Power of Love', artist: 'Huey Lewis and the News', videoId: 'wBl2QGAIx1s', alternate: 'wIiVp3poe2c' },
+    { title: 'Back in the High Life Again', artist: 'Steve Winwood', videoId: 'Adw772km7PQ', alternate: 'ojcSy6kXciI' },
+    { title: 'Another Day in Paradise', artist: 'Phil Collins', videoId: 'Qt2mbGP6vFI', alternate: 'qkDVozHVeM8' },
+    { title: 'Sweet Emotion', artist: 'Aerosmith', videoId: '82cJgPXU-ik', alternate: '15aa3WIHk5M' }
   ];
-  const configuredSources = window.SNAKES_REVENGE_AUDIO || {};
-  const music = new Audio();
+  const $ = id => document.getElementById(id);
+  const toggle = $('music-toggle'), status = $('audio-status');
   const radio = new Audio();
-  music.preload = 'metadata';
   radio.preload = 'metadata';
-  music.volume = 0.38;
   radio.volume = 0.9;
-
-  const title = document.getElementById('track-title');
-  const artist = document.getElementById('track-artist');
-  const label = document.getElementById('track-label');
-  const toggle = document.getElementById('music-toggle');
-  const status = document.getElementById('audio-status');
-  let sceneIndex = -1;
-  let enabled = false;
-
-  function sourceFor(index) {
-    const source = configuredSources[index + 1];
-    return typeof source === 'string' ? source : source?.url;
-  }
+  let player, ready = false, enabled = false, playing = false, sceneIndex = 0;
+  let videoId = tracks[0].videoId, loadedId = '', loadTimer;
 
   function updateButton() {
-    toggle.textContent = enabled ? 'ON' : 'OFF';
-    toggle.setAttribute('aria-pressed', String(enabled));
+    toggle.textContent = playing ? 'PAUSE' : 'PLAY';
+    toggle.setAttribute('aria-pressed', String(playing));
+    toggle.setAttribute('aria-label', playing ? 'Pause soundtrack' : 'Play soundtrack');
   }
-
-  async function playCurrent() {
-    const source = sourceFor(sceneIndex);
+  function updateTrack() {
+    const track = tracks[sceneIndex];
+    $('track-label').textContent = `SNAKE'S HEADSET · SONG ${sceneIndex + 1}`;
+    $('track-title').textContent = track.title;
+    $('track-artist').textContent = track.artist;
+    $('youtube-link').href = `https://www.youtube.com/watch?v=${videoId}`;
+    $('youtube-search').href = `https://www.youtube.com/results?search_query=${encodeURIComponent(track.artist + ' ' + track.title + ' official')}`;
+  }
+  function playCurrent() {
     if (!enabled) return;
-    if (!source) {
-      status.textContent = 'Track identified; licensed audio source is not connected yet.';
+    if (!ready) {
+      status.textContent = 'Loading YouTube. You can keep playing the game.';
       return;
     }
-    if (music.src !== new URL(source, window.location.href).href) music.src = source;
-    try {
-      await music.play();
-      status.textContent = 'Playing through Snake’s headset.';
-    } catch (_error) {
-      status.textContent = 'Tap ON to let this phone start the soundtrack.';
-      enabled = false;
-      updateButton();
-    }
+    status.textContent = 'Starting song. If it stays paused, tap Play in the YouTube player.';
+    if (loadedId !== videoId) {
+      loadedId = videoId;
+      player.loadVideoById(videoId);
+    } else player.playVideo();
   }
-
   function setScene(index) {
+    if (!Number.isInteger(index) || !tracks[index]) return;
     sceneIndex = index;
-    const track = tracks[index];
-    if (!track) return;
-    music.pause();
-    music.removeAttribute('src');
-    music.load();
-    label.textContent = `SNAKE'S HEADSET · SONG ${index + 1}`;
-    title.textContent = track.title;
-    artist.textContent = track.artist;
-    status.textContent = sourceFor(index)
-      ? 'Changing scenes changes the soundtrack automatically.'
-      : 'Track identified; licensed audio source is not connected yet.';
-    playCurrent();
-  }
-
-  toggle.addEventListener('click', () => {
-    enabled = !enabled;
+    videoId = tracks[index].videoId;
+    playing = false;
+    updateTrack();
     updateButton();
-    if (enabled) playCurrent();
-    else {
-      music.pause();
-      status.textContent = 'Soundtrack paused. The game will continue normally.';
+    if (ready) {
+      if (enabled) playCurrent();
+      else { loadedId = videoId; player.cueVideoById(videoId); }
     }
-  });
+  }
+  function enable() { enabled = true; playCurrent(); }
+  function disable() {
+    enabled = false;
+    playing = false;
+    if (ready) player.pauseVideo();
+    updateButton();
+    status.textContent = 'Soundtrack paused. The game continues normally.';
+  }
+  toggle.addEventListener('click', () => playing ? disable() : enable());
 
-  radio.addEventListener('play', () => { music.volume = 0.12; });
-  const restoreMusic = () => { music.volume = 0.38; };
-  radio.addEventListener('ended', restoreMusic);
-  radio.addEventListener('pause', restoreMusic);
-  music.addEventListener('error', () => {
-    status.textContent = 'That audio source is unavailable. The game is still ready to play.';
-  });
-
+  function createPlayer() {
+    if (player) return;
+    player = new window.YT.Player('youtube-player', {
+      width: '100%', height: '240', videoId,
+      playerVars: { playsinline: 1, controls: 1, rel: 0, origin: window.location.origin },
+      events: {
+        onReady(event) {
+          clearTimeout(loadTimer);
+          ready = true;
+          event.target.getIframe().title = 'Snake’s Revenge YouTube soundtrack';
+          event.target.setVolume(38);
+          // The scene may have changed while YouTube loaded.
+          if (enabled) playCurrent();
+          else { loadedId = videoId; event.target.cueVideoById(videoId); }
+        },
+        onStateChange(event) {
+          playing = event.data === 1;
+          if (playing) { enabled = true; status.textContent = 'Playing on YouTube. The next scene starts the next song.'; }
+          else if (event.data === 2) status.textContent = 'Paused. Tap Play to resume the song.';
+          else if (event.data === 0) status.textContent = 'Song finished. Tap Play to replay, or continue to the next scene.';
+          updateButton();
+        },
+        onAutoplayBlocked() {
+          playing = false;
+          enabled = false;
+          updateButton();
+          status.textContent = 'Your browser needs a tap: press Play in the YouTube player below.';
+        },
+        onError(event) {
+          const track = tracks[sceneIndex];
+          if ([100, 101, 150].includes(event.data) && track.alternate && videoId !== track.alternate) {
+            videoId = track.alternate;
+            updateTrack();
+            if (enabled) playCurrent();
+            else { loadedId = videoId; player.cueVideoById(videoId); }
+            return;
+          }
+          playing = false;
+          enabled = false;
+          loadedId = '';
+          updateButton();
+          status.textContent = `YouTube could not play this song here (code ${event.data}). Use Open on YouTube or Find song. The game still works.`;
+        }
+      }
+    });
+  }
+  const previousReady = window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady = () => { previousReady?.(); createPlayer(); };
+  if (window.YT?.Player) createPlayer();
+  else {
+    const script = document.createElement('script');
+    script.src = 'https://www.youtube.com/iframe_api';
+    script.onerror = () => { status.textContent = 'YouTube could not load. Use Open on YouTube, or reload this page to retry.'; };
+    document.head.appendChild(script);
+  }
+  loadTimer = setTimeout(() => {
+    if (!ready) status.textContent = 'YouTube is taking longer to load. You can use Open on YouTube or keep playing.';
+  }, 15000);
+  radio.addEventListener('play', () => { if (ready) player.setVolume(12); });
+  const restoreMusic = () => { if (ready) player.setVolume(38); };
+  ['ended', 'pause', 'error'].forEach(event => radio.addEventListener(event, restoreMusic));
   window.SNAKES_REVENGE_SOUNDTRACK = {
-    tracks: tracks.map(track => ({ ...track })),
-    setScene,
-    enable() { enabled = true; updateButton(); return playCurrent(); },
-    disable() { enabled = false; music.pause(); updateButton(); },
+    tracks: tracks.map(track => ({ ...track })), setScene, enable, disable,
     async playRadioMessage(url) {
       if (!url) return;
       radio.src = url;
       try { await radio.play(); }
-      catch (_error) { status.textContent = 'Tap the screen before playing a radio message.'; }
+      catch (_) { restoreMusic(); status.textContent = 'Tap the screen before playing a radio message.'; }
     }
   };
+  updateTrack();
+  updateButton();
 })();
