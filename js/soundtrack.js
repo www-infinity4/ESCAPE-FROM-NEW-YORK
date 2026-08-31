@@ -20,7 +20,7 @@
   radio.preload = 'metadata';
   radio.volume = 0.9;
   let player, ready = false, enabled = false, playing = false, sceneIndex = 0;
-  let videoId = tracks[0].videoId, loadedId = '', loadTimer;
+  let videoId = tracks[0].videoId, loadedId = '', loadTimer, playbackTimer;
 
   function updateButton() {
     toggle.textContent = playing ? 'PAUSE' : 'PLAY';
@@ -42,6 +42,10 @@
       return;
     }
     status.textContent = 'Starting song. If it stays paused, tap Play in the YouTube player.';
+    clearTimeout(playbackTimer);
+    playbackTimer = setTimeout(() => {
+      if (enabled && !playing) status.textContent = 'Playback has not started. Tap Play in the YouTube player, or use Open on YouTube if it remains unavailable.';
+    }, 12000);
     if (loadedId !== videoId) {
       loadedId = videoId;
       player.loadVideoById(videoId);
@@ -63,6 +67,7 @@
   function disable() {
     enabled = false;
     playing = false;
+    clearTimeout(playbackTimer);
     if (ready) player.pauseVideo();
     updateButton();
     status.textContent = 'Soundtrack paused. The game continues normally.';
@@ -86,7 +91,7 @@
         },
         onStateChange(event) {
           playing = event.data === 1;
-          if (playing) { enabled = true; status.textContent = 'Playing on YouTube. The next scene starts the next song.'; }
+          if (playing) { clearTimeout(playbackTimer); enabled = true; status.textContent = 'Playing on YouTube. The next scene starts the next song.'; }
           else if (event.data === 2) status.textContent = 'Paused. Tap Play to resume the song.';
           else if (event.data === 0) status.textContent = 'Song finished. Tap Play to replay, or continue to the next scene.';
           updateButton();
