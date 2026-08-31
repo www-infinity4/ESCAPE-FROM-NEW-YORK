@@ -19,11 +19,11 @@
     <meta name="twitter:description" content="A phone-first illustrated escape adventure. Read at your own pace—there is no timer.">
     <meta name="twitter:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/title-v3.png">
     <link rel="canonical" href="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/">
-    <link rel="stylesheet" href="css/storybook.css?v=20260831-level2">
+    <link rel="stylesheet" href="css/storybook.css?v=20260831-rewards2">
 </head>
 <body>
     <main id="storybook-game">
-        <div class="share-bar"><span>INFINITY GAMES</span><button id="share-game" type="button">Share game</button><span id="share-status" role="status"></span><button id="confirm-shared" type="button" hidden>I shared the copied link</button></div>
+        <div class="share-bar"><span>INFINITY GAMES</span><a class="game-balance" href="#wallet-rewards"><span id="game-starcoin-balance">0.00</span> StarCoin</a><button id="share-game" type="button">Share game</button><span id="share-status" role="status"></span><button id="confirm-shared" type="button" hidden>I shared the copied link</button></div>
         <section id="story-screen" aria-label="Current game scene">
             <img id="story-image" src="assets/title-v3.png" alt="Snake's Revenge title artwork">
             <div id="scene-badge">20 SCENES · 2 LEVELS</div>
@@ -67,7 +67,7 @@
         <p class="classic-note">The original 8-bit prototype is archived in the repository and is no longer loaded by this page.</p>
     </main>
     <section id="wallet-area" aria-label="Unified Infinity Wallet">
-        <h2>StarCoin rewards</h2><p class="balance-line"><strong id="starcoin-balance">0.00</strong> StarCoin · shared wallet balance</p>
+        <h2 id="wallet-rewards">StarCoin rewards</h2><p class="balance-line"><strong id="starcoin-balance">0.00</strong> StarCoin · shared wallet balance</p>
         <p>Complete a level: +0.1 · Share the game: +0.1 · Share each song: +0.1.</p>
         <p class="reward-note">Each reward is available once per wallet for that level, game, or song. Replays and repeat shares do not add it again. Native shares are browser-confirmed; copied links require your confirmation.</p>
         <p id="reward-wallet-id"></p><button id="connect-rewards" class="secondary-button" type="button">Connect unified wallet</button><span id="pending-count">0 pending rewards</span>
@@ -76,10 +76,10 @@
         <div data-infinity-wallet-slot></div>
     </section>
     <script src="js/data.js?v=20260827-revenge4"></script><script src="js/scenarios.js?v=20260827-revenge4"></script>
-    <script src="js/levels.js?v=20260831-level2"></script>
+    <script src="js/levels.js?v=20260831-rewards2"></script>
     <script src="https://www-infinity4.github.io/Mint-For-Infinity/unified-wallet.js?v=20260831-game-rewards1"></script>
-    <script src="js/rewards.js?v=20260831-level2"></script>
-    <script src="js/soundtrack.js?v=20260831-level2"></script><script src="js/storybook.js?v=20260831-level2"></script>
+    <script src="js/rewards.js?v=20260831-rewards2"></script>
+    <script src="js/soundtrack.js?v=20260831-rewards2"></script><script src="js/storybook.js?v=20260831-rewards2"></script>
     <script src="https://www-infinity4.github.io/Mint-For-Infinity/infinity-wallet-menu.js?v=20260814-menu2"></script>
 </body>
 </html>

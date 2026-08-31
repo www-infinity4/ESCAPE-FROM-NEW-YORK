@@ -14,7 +14,7 @@ Progress is saved in this browser. Wrong answers can be retried; completing all 
 
 Native sharing must resolve successfully. Clipboard fallback requires explicit confirmation after sharing; copying alone and canceled shares do not earn rewards. These are device-local, self-reported rewards, not server-verified distribution.
 
-Uses the shared Infinity wallet engine from Mint-For-Infinity and the same local-storage wallet used by StarQuest’s unified-wallet integration on this GitHub Pages origin. It does not update StarQuest’s separate cloud ledger or synchronize across browsers/devices. Pending rewards persist until a wallet is connected. Wallet credits use deterministic event IDs to prevent duplicate awards.
+Uses the shared Infinity wallet engine from Mint-For-Infinity and the same local-storage wallet used by StarQuest’s unified-wallet integration on this GitHub Pages origin. It does not update StarQuest’s separate cloud ledger or synchronize across browsers/devices. The final correct answer credits the level immediately. The first award creates a local unified wallet if none is connected. Saved completed levels and pending rewards are recovered on load and focus; repeated recovery never duplicates credits. Wallet credits use deterministic event IDs to prevent duplicate awards.
 
 ## Validation
 

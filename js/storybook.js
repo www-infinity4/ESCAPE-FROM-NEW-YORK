@@ -53,6 +53,10 @@
     $('answer-feedback').textContent='Correct. '+scene.hint;
     [...$('answer-list').children].forEach((item,j)=>{item.disabled=true;if(j===scene.correct)item.classList.add('correct');});
     $('next-scene').hidden=false;save();
+    if(run.solved.length===10) {
+      if(!saved.completed.includes(level.id)) saved.completed.push(level.id);
+      save(); rewardLevel();
+    }
   }
   function start(id,resume=false) {
     level=levels.find(item=>item.id===Number(id));if(!level)return;

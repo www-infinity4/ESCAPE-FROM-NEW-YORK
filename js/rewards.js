@@ -21,7 +21,9 @@
   function render() {
     try {
       const wallet = engine(), id = wallet.state.currentWalletId;
-      $('starcoin-balance').textContent = id ? wallet.balance(id, 'STAR_COIN').toFixed(2) : '0.00';
+      const balance = id ? wallet.balance(id, 'STAR_COIN').toFixed(2) : '0.00';
+      $('starcoin-balance').textContent = balance;
+      $('game-starcoin-balance').textContent = balance;
       $('connect-rewards').textContent = id ? 'Sync pending rewards' : 'Connect unified wallet';
       $('reward-wallet-id').textContent = id ? 'Wallet: ' + id : 'Use the same browser wallet linked from StarQuest.';
       $('pending-count').textContent = `${pending().length} pending reward${pending().length === 1 ? '' : 's'}`;
@@ -33,7 +35,11 @@
     const result = queue.then(run, run); queue = result.catch(() => {}); return result;
   }
   async function flush() {
-    const active = walletId();
+    let active = walletId();
+    if (!active && pending().some(item => !item.walletId)) {
+      const wallet = engine();
+      active = wallet.createWallet({displayName:'Unified Infinity Wallet'}).walletId;
+    }
     if (!active) { status('Reward saved as pending. Connect the unified wallet below to collect it.'); render(); return; }
     const records = pending();
     let credited = 0, duplicates = 0;
@@ -101,8 +107,27 @@
     $('share-status').textContent='Your share confirmation was recorded.';
     earn(receipt.kind,receipt.id,{method:'clipboard-user-confirmed',confirmation:'self-reported',url:receipt.url});
   });
+  function recover() {
+    return exclusive(async () => {
+      const progress = JSON.parse(localStorage.getItem('snakes_revenge_story_progress_v2') || 'null');
+      const completed = new Set((progress?.completed || []).filter(id => id === 1 || id === 2));
+      const run = progress?.run;
+      if ([1,2].includes(run?.levelId) && Array.isArray(run.solved) && Array.from({length:10},(_,i)=>i).every(i=>run.solved.includes(i))) completed.add(run.levelId);
+      const records = pending();
+      const wallet = engine(), active = wallet.state.currentWalletId;
+      for (const id of completed) {
+        const rewardId = `level-${id}`;
+        const eventId = 'game-reward:' + [active,GAME,'LEVEL_COMPLETED',rewardId].map(encodeURIComponent).join(':');
+        if (!wallet.processedEventIds.has(eventId) && !records.some(item=>item.kind==='LEVEL_COMPLETED' && item.id===rewardId && (!item.walletId || item.walletId===active)))
+          records.push({kind:'LEVEL_COMPLETED',id:rewardId,walletId:active,proof:{recoveredFromSavedProgress:true},createdAt:new Date().toISOString()});
+      }
+      save(records);
+      if (records.length) await flush(); else render();
+    }).catch(error=>status('Could not recover rewards: '+error.message));
+  }
   window.addEventListener('storage', render);
-  window.addEventListener('focus', render);
+  window.addEventListener('focus', recover);
   window.SNAKES_REVENGE_REWARDS = {earn,render};
   render();
+  recover();
 })();
