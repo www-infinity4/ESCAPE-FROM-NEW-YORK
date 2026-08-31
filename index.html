@@ -4,30 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Snake's Revenge | Infinity Games</title>
-    <meta name="description" content="Play Snake’s Revenge: ten illustrated escape scenes with a different YouTube song for each scene. Take your time—there is no timer.">
+    <meta name="description" content="Play Snake’s Revenge: twenty illustrated escape scenes with a different YouTube song for each scene. Take your time—there is no timer.">
     <meta property="og:title" content="Snake's Revenge: Escape from New York">
-    <meta property="og:description" content="Play ten illustrated escape scenes with a classic-rock YouTube soundtrack. Guide Snake through New York at your own pace.">
+    <meta property="og:description" content="Play twenty illustrated escape scenes with classic rock and 1990s alternative on YouTube. Guide Snake through New York at your own pace.">
     <meta property="og:type" content="website"><meta property="og:url" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta property="og:image:type" content="image/png">
-    <meta property="og:image:secure_url" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=20260831">
+    <meta property="og:image:secure_url" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/title-v3.png">
     <meta property="og:site_name" content="Infinity Games">
-    <meta property="og:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=20260831">
-    <meta property="og:image:width" content="1729"><meta property="og:image:height" content="910">
-    <meta property="og:image:alt" content="Snake's Revenge illustrated maze adventure with an operative, snake guide, guards, and glowing exit">
+    <meta property="og:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/title-v3.png">
+    <meta property="og:image:width" content="1672"><meta property="og:image:height" content="941">
+    <meta property="og:image:alt" content="Snake’s Revenge title artwork with a hooded explorer, glowing snake guide, and New York skyline">
     <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Snake's Revenge: Escape from New York">
     <meta name="twitter:description" content="A phone-first illustrated escape adventure. Read at your own pace—there is no timer.">
-    <meta name="twitter:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/social-preview.png?v=20260831">
+    <meta name="twitter:image" content="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/assets/title-v3.png">
     <link rel="canonical" href="https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/">
-    <link rel="stylesheet" href="css/storybook.css?v=20260831-youtube2">
+    <link rel="stylesheet" href="css/storybook.css?v=20260831-level2">
 </head>
 <body>
     <main id="storybook-game">
-        <div class="share-bar"><span>INFINITY GAMES</span><button id="share-game" type="button">Share game</button><span id="share-status" role="status"></span></div>
+        <div class="share-bar"><span>INFINITY GAMES</span><button id="share-game" type="button">Share game</button><span id="share-status" role="status"></span><button id="confirm-shared" type="button" hidden>I shared the copied link</button></div>
         <section id="story-screen" aria-label="Current game scene">
-            <img id="story-image" src="assets/social-preview.png" alt="Snake's Revenge title artwork">
-            <div id="scene-badge">ILLUSTRATED PROTOTYPE · LEVEL 1</div>
+            <img id="story-image" src="assets/title-v3.png" alt="Snake's Revenge title artwork">
+            <div id="scene-badge">20 SCENES · 2 LEVELS</div>
         </section>
+        <p id="image-status" role="status"></p>
         <section id="soundtrack-panel" aria-label="Headset soundtrack">
             <div class="headset-icon" aria-hidden="true">🎧</div>
             <div class="track-copy">
@@ -40,31 +41,45 @@
         <p id="audio-status" role="status" aria-live="polite">Start the mission to play music. Your phone may also need a tap on the YouTube player.</p>
         <section class="youtube-panel" aria-label="YouTube music player">
             <div class="youtube-frame"><div id="youtube-player"></div></div>
-            <div class="music-links"><a id="youtube-link" href="https://www.youtube.com/watch?v=dV3AziKTBUo" target="_blank" rel="noopener">Open on YouTube</a><a id="youtube-search" href="https://www.youtube.com/results?search_query=Steve+Miller+Band+The+Joker+official" target="_blank" rel="noopener">Find song</a></div>
+            <p id="music-era">Classic rock · 1970s–1980s</p><div class="music-links"><button id="share-song" type="button">Share song · +0.1 StarCoin</button><a id="youtube-link" href="https://www.youtube.com/watch?v=dV3AziKTBUo" target="_blank" rel="noopener">Open on YouTube</a><a id="youtube-search" href="https://www.youtube.com/results?search_query=Steve+Miller+Band+The+Joker+official" target="_blank" rel="noopener">Find song</a></div>
         </section>
         <section id="start-panel" class="game-panel">
             <p class="eyebrow">INFINITY GAMES PRESENTS</p><h1>Snake's Revenge</h1><h2>Escape from New York</h2>
             <p>Study each scene and decide how the team should escape. Take all the time you need—nothing advances until you press a button.</p>
-            <button id="start-game" class="primary-button" type="button">START LEVEL 1</button>
+            <label class="level-picker" for="level-select">Choose your level</label><select id="level-select"></select>
+            <p id="completed-count"></p><p id="progress-status" role="status"></p>
+            <button id="start-game" class="primary-button" type="button">START SELECTED LEVEL</button>
+            <button id="resume-game" class="secondary-button" type="button" hidden>RESUME GAME</button>
         </section>
         <section id="question-panel" class="game-panel" hidden aria-live="polite">
-            <div class="progress-row"><span>LEVEL 1 · THE PRISON MAZE</span><span id="question-count">SCENE 1 OF 10</span></div>
+            <div class="progress-row"><span id="level-label">LEVEL 1 · THE PRISON MAZE</span><span id="question-count">SCENE 1 OF 10</span></div>
             <div class="progress-track" aria-hidden="true"><div id="progress-fill"></div></div>
+            <h3 id="scene-title"></h3><p id="scene-briefing"></p>
             <h2 id="question-text"></h2><div id="answer-list" aria-label="Answer choices"></div>
             <div id="answer-feedback" hidden></div><button id="next-scene" class="primary-button" type="button" hidden>NEXT SCENE</button>
         </section>
         <section id="complete-panel" class="game-panel" hidden>
-            <p class="eyebrow">LEVEL 1 PROTOTYPE COMPLETE</p><h2>You reached extraction.</h2><p id="final-score"></p>
-            <p>The first ten illustrated decisions are complete. The remaining ninety scenes can follow this same format.</p>
+            <p id="complete-label" class="eyebrow">LEVEL COMPLETE</p><h2 id="complete-title">You reached extraction.</h2><p id="final-score"></p>
+            <p id="more-levels"></p><p>Level completion earns 0.1 StarCoin once per level, per wallet.</p><button id="claim-level-reward" class="secondary-button" type="button">Check level reward</button><button id="next-level" class="primary-button" type="button" hidden>START NEXT LEVEL</button>
             <button id="play-again" class="primary-button" type="button">PLAY LEVEL AGAIN</button>
         </section>
+        <button id="choose-level" class="secondary-button" type="button">LEVEL MENU</button>
         <p class="classic-note">The original 8-bit prototype is archived in the repository and is no longer loaded by this page.</p>
     </main>
     <section id="wallet-area" aria-label="Unified Infinity Wallet">
-        <h2>Unified Infinity Wallet</h2><p>Your wallet stays below the complete game.</p><div data-infinity-wallet-slot></div>
+        <h2>StarCoin rewards</h2><p class="balance-line"><strong id="starcoin-balance">0.00</strong> StarCoin · shared wallet balance</p>
+        <p>Complete a level: +0.1 · Share the game: +0.1 · Share each song: +0.1.</p>
+        <p class="reward-note">Each reward is available once per wallet for that level, game, or song. Replays and repeat shares do not add it again. Native shares are browser-confirmed; copied links require your confirmation.</p>
+        <p id="reward-wallet-id"></p><button id="connect-rewards" class="secondary-button" type="button">Connect unified wallet</button><span id="pending-count">0 pending rewards</span>
+        <p id="reward-status" role="status" aria-live="polite">Rewards use the same device-local unified wallet linked from StarQuest.</p>
+        <p class="reward-note">Saved in this browser on www-infinity4.github.io. These credits are not yet synchronized to StarQuest’s cloud balance or other devices. Keep site data to preserve them.</p>
+        <div data-infinity-wallet-slot></div>
     </section>
     <script src="js/data.js?v=20260827-revenge4"></script><script src="js/scenarios.js?v=20260827-revenge4"></script>
-    <script src="js/soundtrack.js?v=20260831-youtube2"></script><script src="js/storybook.js?v=20260831-youtube2"></script>
+    <script src="js/levels.js?v=20260831-level2"></script>
+    <script src="https://www-infinity4.github.io/Mint-For-Infinity/unified-wallet.js?v=20260831-game-rewards1"></script>
+    <script src="js/rewards.js?v=20260831-level2"></script>
+    <script src="js/soundtrack.js?v=20260831-level2"></script><script src="js/storybook.js?v=20260831-level2"></script>
     <script src="https://www-infinity4.github.io/Mint-For-Infinity/infinity-wallet-menu.js?v=20260814-menu2"></script>
 </body>
 </html>

@@ -12,7 +12,17 @@
     { title: 'The Power of Love', artist: 'Huey Lewis and the News', videoId: 'wBl2QGAIx1s', alternate: 'wIiVp3poe2c' },
     { title: 'Back in the High Life Again', artist: 'Steve Winwood', videoId: 'Adw772km7PQ', alternate: 'ojcSy6kXciI' },
     { title: 'Another Day in Paradise', artist: 'Phil Collins', videoId: 'Qt2mbGP6vFI', alternate: 'qkDVozHVeM8' },
-    { title: 'Sweet Emotion', artist: 'Aerosmith', videoId: '82cJgPXU-ik', alternate: '15aa3WIHk5M' }
+    { title: 'Sweet Emotion', artist: 'Aerosmith', videoId: '82cJgPXU-ik', alternate: '15aa3WIHk5M' },
+    { title: 'Come As You Are', artist: 'Nirvana', videoId: 'vabnZ9-ex7o', alternate: 'W2QeQ9ZufAk' },
+    { title: 'Alive', artist: 'Pearl Jam', videoId: 'qM0zINtulhM', alternate: '3MutXUvS37k' },
+    { title: 'Black Hole Sun', artist: 'Soundgarden', videoId: '3mbBbFH9fAg', alternate: '9kIv6vVRKpw' },
+    { title: 'Would?', artist: 'Alice In Chains', videoId: 'Nco_kh8xJDs', alternate: '4L56DPmFl8w' },
+    { title: 'Interstate Love Song', artist: 'Stone Temple Pilots', videoId: 'yjJL9DGU7Gg', alternate: 'UjjyC8lmoQs' },
+    { title: '1979', artist: 'The Smashing Pumpkins', videoId: '4aeETEoNfOg', alternate: 'A6M0yLxLCNA' },
+    { title: "Say It Ain't So", artist: 'Weezer', videoId: 'ENXvZ9YRjbo', alternate: 'LQcMOI8dMas' },
+    { title: 'High and Dry', artist: 'Radiohead', videoId: '7qFfFVSerQo', alternate: '7fv84nPfTH0' },
+    { title: 'Shine', artist: 'Collective Soul', videoId: '_m0bI82Rz_k', alternate: 'iuB1A2VJ3-k' },
+    { title: 'Learn to Fly', artist: 'Foo Fighters', videoId: '1VQ_3sBZEm0' }
   ];
   const $ = id => document.getElementById(id);
   const toggle = $('music-toggle'), status = $('audio-status');
@@ -29,7 +39,7 @@
   }
   function updateTrack() {
     const track = tracks[sceneIndex];
-    $('track-label').textContent = `SNAKE'S HEADSET · SONG ${sceneIndex + 1}`;
+    $('track-label').textContent = `SNAKE'S HEADSET · LEVEL ${Math.floor(sceneIndex / 10) + 1} · SONG ${sceneIndex % 10 + 1}/10`;
     $('track-title').textContent = track.title;
     $('track-artist').textContent = track.artist;
     $('youtube-link').href = `https://www.youtube.com/watch?v=${videoId}`;
@@ -137,6 +147,7 @@
   ['ended', 'pause', 'error'].forEach(event => radio.addEventListener(event, restoreMusic));
   window.SNAKES_REVENGE_SOUNDTRACK = {
     tracks: tracks.map(track => ({ ...track })), setScene, enable, disable,
+    currentTrack: () => ({ ...tracks[sceneIndex], index: sceneIndex }),
     async playRadioMessage(url) {
       if (!url) return;
       radio.src = url;

@@ -1,14 +1,102 @@
 'use strict';
-(()=>{const sceneFiles=['01-patrol.webp','02-landmarks.webp','03-gate-release.webp','04-yard-cover.webp','05-rally-point.webp','06-dead-end.webp','07-searchlight.webp','08-symbol-key.webp','09-unstable-ground.webp','10-extraction-run.webp'].map(file=>`assets/story/level-01/${file}`);const questions=GAME_DATA.levels[0].questions;const $=id=>document.getElementById(id);const image=$('story-image'),startPanel=$('start-panel'),questionPanel=$('question-panel'),completePanel=$('complete-panel'),startButton=$('start-game'),nextButton=$('next-scene'),replayButton=$('play-again'),questionText=$('question-text'),questionCount=$('question-count'),progressFill=$('progress-fill'),answerList=$('answer-list'),feedback=$('answer-feedback'),finalScore=$('final-score'),badge=$('scene-badge');let index=0,score=0,answered=false;function preload(i){if(!sceneFiles[i])return;const img=new Image();img.src=sceneFiles[i]}function renderQuestion(){answered=false;const q=questions[index];image.src=sceneFiles[index];image.alt=`Illustrated escape scene ${index+1} of 10`;badge.textContent=`LEVEL 1 · SCENE ${index+1} OF 10`;questionCount.textContent=`SCENE ${index+1} OF 10`;progressFill.style.width=`${(index+1)*10}%`;questionText.textContent=q.q;feedback.hidden=true;feedback.textContent='';nextButton.hidden=true;answerList.replaceChildren();q.opts.forEach((option,i)=>{const button=document.createElement('button');button.type='button';button.className='answer-button';button.textContent=`${String.fromCharCode(65+i)}. ${option}`;button.addEventListener('click',()=>chooseAnswer(i));answerList.appendChild(button)});window.SNAKES_REVENGE_SOUNDTRACK?.setScene(index);preload(index+1);window.scrollTo({top:0,behavior:'smooth'})}function chooseAnswer(selected){if(answered)return;answered=true;const q=questions[index],correct=selected===q.correct;[...answerList.querySelectorAll('.answer-button')].forEach((button,i)=>{button.disabled=true;if(i===q.correct)button.classList.add('correct');if(i===selected&&!correct)button.classList.add('wrong')});if(correct)score+=100;feedback.innerHTML=`<strong>${correct?'Good decision.':'Study the safer route.'}</strong><br>${q.hint}`;feedback.hidden=false;nextButton.textContent=index===questions.length-1?'REACH EXTRACTION':'NEXT SCENE';nextButton.hidden=false}function startGame(){index=0;score=0;startPanel.hidden=true;completePanel.hidden=true;questionPanel.hidden=false;renderQuestion();window.SNAKES_REVENGE_SOUNDTRACK?.enable()}function nextScene(){if(!answered)return;if(index<questions.length-1){index++;renderQuestion();return}questionPanel.hidden=true;completePanel.hidden=false;badge.textContent='LEVEL 1 · EXTRACTION COMPLETE';finalScore.textContent=`${score/100} of 10 safe decisions selected on the first try.`;window.scrollTo({top:0,behavior:'smooth'})}startButton.addEventListener('click',startGame);replayButton.addEventListener('click',startGame);nextButton.addEventListener('click',nextScene);document.addEventListener('keydown',event=>{if(!questionPanel.hidden&&!answered&&/^[1-4]$/.test(event.key))chooseAnswer(Number(event.key)-1);else if(!questionPanel.hidden&&answered&&event.key==='Enter')nextScene()});window.__storybookGame={getState:()=>({index,score,answered,total:questions.length}),sceneFiles:[...sceneFiles]}})();
-
-// Share the website URL so messaging apps can fetch the image and title from HTML.
-document.getElementById('share-game').addEventListener('click', async () => {
-  const data = { title: "Snake's Revenge: Escape from New York", url: 'https://www-infinity4.github.io/ESCAPE-FROM-NEW-YORK/?v=20260831' };
-  const status = document.getElementById('share-status');
-  try {
-    if (navigator.share) await navigator.share(data);
-    else { await navigator.clipboard.writeText(data.url); status.textContent = 'Game link copied.'; }
-  } catch (error) {
-    if (error.name !== 'AbortError') status.textContent = 'Copy the page address to share this game.';
+(() => {
+  const levels=window.SNAKES_REVENGE_LEVELS;
+  const KEY='snakes_revenge_story_progress_v2';
+  const $=id=>document.getElementById(id);
+  let saved={completed:[],run:null},run=null,level=null;
+  try { const data=JSON.parse(localStorage.getItem(KEY)||'null'); if(data&&Array.isArray(data.completed))saved=data; } catch (_) {}
+  const image=$('story-image');
+  image.addEventListener('error',()=>{
+    if(image.dataset.fallback!=='yes') { image.dataset.fallback='yes';image.src='assets/story/level-01/01-patrol.webp';$('image-status').textContent='The scene artwork could not load. The briefing below still contains everything needed.'; }
+  });
+  function save() { try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(_){$('progress-status').textContent='Progress could not be saved on this browser. Keep this page open to continue.';} }
+  function levelMenu() {
+    $('level-select').replaceChildren();
+    levels.forEach(item=>{const option=document.createElement('option');option.value=item.id;option.textContent=`Level ${item.id}: ${item.title}${saved.completed.includes(item.id)?' · complete':''}`;$('level-select').append(option);});
+    $('completed-count').textContent=`${saved.completed.length} of ${levels.length} available levels completed · 20 of 100 scenes built`;
+    const resume=saved.run&&levels.find(item=>item.id===saved.run.levelId);
+    $('resume-game').hidden=!resume;
+    if(resume){$('resume-game').textContent=`RESUME LEVEL ${resume.id} · SCENE ${Math.min(10,saved.run.index+1)}`;$('level-select').value=resume.id;}
   }
-});
+  function setImage(scene) {delete image.dataset.fallback;image.src=scene.image;image.alt=scene.title;$('image-status').textContent='';}
+  function render() {
+    const scene=level.scenes[run.index];
+    setImage(scene);
+    $('scene-badge').textContent=`LEVEL ${level.id} · SCENE ${run.index+1} OF 10`;
+    $('level-label').textContent=`LEVEL ${level.id} · ${level.title.toUpperCase()}`;
+    $('question-count').textContent=`SCENE ${run.index+1} OF 10`;
+    $('music-era').textContent=level.era;
+    $('progress-fill').style.width=`${(run.index+1)*10}%`;
+    $('scene-title').textContent=scene.title;
+    $('scene-briefing').textContent=scene.briefing;
+    $('question-text').textContent=scene.q;
+    $('answer-list').replaceChildren();
+    const solved=run.solved.includes(run.index);
+    scene.opts.forEach((option,i)=>{
+      const button=document.createElement('button');button.type='button';button.className='answer-button';button.textContent=`${String.fromCharCode(65+i)}. ${option}`;
+      if(solved){button.disabled=true;if(i===scene.correct)button.classList.add('correct');}
+      button.addEventListener('click',()=>answer(i,button));$('answer-list').append(button);
+    });
+    $('answer-feedback').hidden=!solved;$('answer-feedback').textContent=solved?scene.hint:'';
+    $('next-scene').hidden=!solved;$('next-scene').textContent=run.index===9?'COMPLETE LEVEL':'NEXT SCENE';
+    window.SNAKES_REVENGE_SOUNDTRACK?.setScene(level.trackOffset+run.index);
+    const next=level.scenes[run.index+1];if(next){const preload=new Image();preload.src=next.image;}
+    saved.run=run;save();window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function answer(i,button) {
+    if(run.solved.includes(run.index))return;
+    const scene=level.scenes[run.index];const first=!run.attempted.includes(run.index);
+    if(first)run.attempted.push(run.index);
+    $('answer-feedback').hidden=false;
+    if(i!==scene.correct){button.classList.add('wrong');button.disabled=true;$('answer-feedback').textContent='Try again. '+scene.hint;save();return;}
+    run.solved.push(run.index);if(first)run.score+=100;
+    $('answer-feedback').textContent='Correct. '+scene.hint;
+    [...$('answer-list').children].forEach((item,j)=>{item.disabled=true;if(j===scene.correct)item.classList.add('correct');});
+    $('next-scene').hidden=false;save();
+  }
+  function start(id,resume=false) {
+    level=levels.find(item=>item.id===Number(id));if(!level)return;
+    const candidate=saved.run;
+    const valid=resume&&candidate?.levelId===level.id&&Number.isInteger(candidate.index)&&candidate.index>=0&&candidate.index<10&&Array.isArray(candidate.solved)&&Array.isArray(candidate.attempted);
+    run=valid?candidate:{levelId:level.id,index:0,score:0,solved:[],attempted:[]};
+    $('start-panel').hidden=true;$('complete-panel').hidden=true;$('question-panel').hidden=false;
+    saved.run=run;render();window.SNAKES_REVENGE_SOUNDTRACK?.enable();
+  }
+  function rewardLevel() {
+    if(!run||run.solved.length!==10)return;
+    window.SNAKES_REVENGE_REWARDS?.earn('LEVEL_COMPLETED',`level-${level.id}`,{solved:10,firstTry:run.score/100,contentVersion:'20260831-level2'});
+  }
+  function next() {
+    if(!run||!run.solved.includes(run.index))return;
+    if(run.index<9){run.index++;render();return;}
+    $('question-panel').hidden=true;$('complete-panel').hidden=false;
+    $('scene-badge').textContent=`LEVEL ${level.id} COMPLETE`;
+    $('complete-label').textContent=`LEVEL ${level.id} · ${level.era}`;
+    $('complete-title').textContent=level.id===1?'The rooftop route is open.':'You reached the harbor.';
+    $('final-score').textContent=`All 10 challenges solved. ${run.score/100} answered correctly on the first try.`;
+    if(!saved.completed.includes(level.id))saved.completed.push(level.id);
+    saved.run=null;save();levelMenu();rewardLevel();
+    const following=levels.find(item=>item.id===level.id+1);
+    $('next-level').hidden=!following;
+    $('next-level').textContent=following?`START LEVEL ${following.id} · ${following.era.toUpperCase()}`:'';
+    $('more-levels').textContent=following?'Next: ten new scenes and ten 1990s alternative songs.':'Levels 1 and 2 are complete. The next 80 scenes will be added in later releases.';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  $('start-game').addEventListener('click',()=>start($('level-select').value));
+  $('resume-game').addEventListener('click',()=>start(saved.run?.levelId,true));
+  $('next-scene').addEventListener('click',next);
+  $('play-again').addEventListener('click',()=>start(level.id));
+  $('next-level').addEventListener('click',()=>start(level.id+1));
+  $('claim-level-reward').addEventListener('click',rewardLevel);
+  $('choose-level').addEventListener('click',()=>{
+    $('question-panel').hidden=true;$('complete-panel').hidden=true;$('start-panel').hidden=false;levelMenu();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+  document.addEventListener('keydown',event=>{
+    if(event.target.closest('input,textarea,select,button,a')||$('question-panel').hidden)return;
+    if(/^[1-4]$/.test(event.key))$('answer-list').children[Number(event.key)-1]?.click();
+    else if(event.key==='Enter'&&!$('next-scene').hidden)next();
+  });
+  levelMenu();
+  window.__storybookGame={getState:()=>({levelId:level?.id,index:run?.index,score:run?.score,solved:run?.solved?.length,total:20}),sceneFiles:levels.flatMap(item=>item.scenes.map(scene=>scene.image))};
+})();
